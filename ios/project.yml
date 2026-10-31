@@ -1,0 +1,54 @@
+name: SyncBench
+options:
+  bundleIdPrefix: com.syncbench
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  SyncBench:
+    type: application
+    platform: iOS
+    sources:
+      - path: SyncBench
+    info:
+      path: SyncBench/Info.plist
+      properties:
+        CFBundleDisplayName: SyncBench
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        # Allows plain-HTTP to localhost, *.local and LAN IP addresses (development only).
+        # Production must use an HTTPS URL.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.syncbench.app
+        GENERATE_INFOPLIST_FILE: NO
+  SyncBenchTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: SyncBenchTests
+    dependencies:
+      - target: SyncBench
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.syncbench.app.tests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  SyncBench:
+    build:
+      targets:
+        SyncBench: all
+        SyncBenchTests: [test]
+    test:
+      targets:
+        - SyncBenchTests

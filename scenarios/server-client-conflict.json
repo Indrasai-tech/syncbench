@@ -1,0 +1,15 @@
+{
+  "id": "server-client-conflict",
+  "name": "Server/Client Conflict (server_wins)",
+  "description": "The server and an offline client change the same field. The declared policy is server_wins, so the server value must survive while unrelated client edits are kept.",
+  "policy": "server_wins",
+  "initial_state": {"id": "task-001", "status": "open", "notes": "Initial notes", "version": 1},
+  "operations": [
+    {"client": "device-A", "connection": "offline", "action": "update", "field": "status", "value": "completed"},
+    {"client": "device-A", "connection": "offline", "action": "update", "field": "notes", "value": "Checked on site"},
+    {"client": "server", "action": "server_update", "field": "status", "value": "cancelled"},
+    {"client": "device-A", "connection": "online", "action": "sync"}
+  ],
+  "expected_final_state": {"status": "cancelled", "notes": "Checked on site"},
+  "assertions": ["status_matches_expected", "notes_matches_expected", "all_operations_acknowledged"]
+}

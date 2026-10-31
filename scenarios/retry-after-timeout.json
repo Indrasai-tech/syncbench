@@ -1,0 +1,20 @@
+{
+  "id": "retry-after-timeout",
+  "name": "Timeout and Retry (Lost Response)",
+  "description": "The server applies the request but the response is lost. The client retries; the retry must be safe.",
+  "policy": "merge_non_overlapping_fields",
+  "seed": 7,
+  "max_retries": 3,
+  "timeout_ms": 5000,
+  "initial_state": {"id": "counter-001", "count": 0, "version": 1},
+  "operations": [
+    {"client": "device-A", "connection": "offline", "action": "increment", "field": "count", "value": 1},
+    {"client": "device-A", "connection": "online", "action": "sync"}
+  ],
+  "failures": [
+    {"type": "delay", "client": "device-A", "on_sync": 1, "delay_ms": 200, "jitter_ms": 100},
+    {"type": "drop_response", "client": "device-A", "on_sync": 1, "on_attempt": 1}
+  ],
+  "expected_final_state": {"count": 1},
+  "assertions": ["count_matches_expected", "no_duplicate_business_effects", "all_operations_acknowledged"]
+}

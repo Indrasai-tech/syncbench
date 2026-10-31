@@ -1,0 +1,16 @@
+{
+  "id": "duplicate-request",
+  "name": "Duplicate Request Delivery",
+  "description": "The network delivers the same sync request twice. The counter must increase exactly once.",
+  "policy": "merge_non_overlapping_fields",
+  "initial_state": {"id": "counter-001", "count": 0, "version": 1},
+  "operations": [
+    {"client": "device-A", "connection": "offline", "action": "increment", "field": "count", "value": 1},
+    {"client": "device-A", "connection": "online", "action": "sync"}
+  ],
+  "failures": [
+    {"type": "duplicate_delivery", "client": "device-A", "on_sync": 1}
+  ],
+  "expected_final_state": {"count": 1},
+  "assertions": ["count_matches_expected", "no_duplicate_business_effects", "all_operations_acknowledged"]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "concurrent-field-updates",
+  "name": "Concurrent Field Updates",
+  "description": "Two offline clients edit different fields of the same record. Both edits must survive.",
+  "policy": "merge_non_overlapping_fields",
+  "initial_state": {"id": "task-001", "status": "open", "notes": "Initial notes", "version": 1},
+  "operations": [
+    {"client": "device-A", "connection": "offline", "action": "update", "field": "status", "value": "completed"},
+    {"client": "device-B", "connection": "offline", "action": "update", "field": "notes", "value": "Checked on site"},
+    {"client": "device-A", "connection": "online", "action": "sync"},
+    {"client": "device-B", "connection": "online", "action": "sync"}
+  ],
+  "expected_final_state": {"status": "completed", "notes": "Checked on site"},
+  "assertions": ["status_matches_expected", "notes_matches_expected", "no_lost_updates", "no_duplicate_business_effects"]
+}
