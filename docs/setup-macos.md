@@ -1,9 +1,9 @@
 # macOS setup
 
 1. Install Xcode (App Store), open it once, then `xcode-select --install`.
-2. `brew install git python@3.12 xcodegen` (and Docker Desktop if you want containers).
+2. Install Swift 5.10+, XcodeGen, and optionally Docker Desktop.
 3. `git clone https://github.com/YOUR_USERNAME/syncbench.git && cd syncbench`
-4. Start the backend (`docker compose up --build`, or the venv steps in the README).
+4. Start the backend (`cd backend && swift run syncbench-server`) or use `docker compose up --build` from the repository root.
 5. ```bash
    cd ios
    xcodegen generate

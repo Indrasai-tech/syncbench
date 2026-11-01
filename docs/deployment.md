@@ -1,13 +1,10 @@
 # Deployment
 
-1. Create a managed PostgreSQL database and a container/web service from `backend/Dockerfile` (build context = repo root).
-2. Set secrets in the provider's environment settings, never in git:
-   - `DATABASE_URL=postgresql+psycopg://USER:PASSWORD@HOST:5432/DB`
-   - `API_KEY=<long random string>` (required for any public deployment)
-3. Run command: `uvicorn app.main:app --host 0.0.0.0 --port 8000`. Tables are created on startup.
-4. Verify `GET /health`, then call `/api/v1/scenarios` with the `X-API-Key` header.
-5. In the iOS app: Settings -> your `https://` URL and API key.
-6. Run all scenarios: `python scripts/seed_demo_data.py --base-url https://YOUR_HOST --api-key KEY`.
+1. Build and deploy `backend/Dockerfile` using the repository root as build context.
+2. Configure `API_KEY` with a long random secret and provide durable storage mounted at `/app/data`.
+3. Set `PORT` to the platform's assigned port. `SCENARIOS_DIR` defaults to `/app/scenarios` in the image.
+4. Verify `GET /health`, then call `/api/v1/scenarios` with `X-API-Key`.
+5. In the iOS app, set the service's HTTPS URL and API key in Settings.
+6. Use `/api/v1/runs/compare` to compare synchronizers, or submit persisted runs individually.
 
-Before opening it to others: add rate limiting at the proxy (runs are cheap but unbounded), restrict `/docs` if desired,
-and add Alembic migrations before changing the schema in production.
+The bundled JSON file store is for a single API process. For multiple replicas or sustained concurrent writes, replace it with a shared database-backed store and add proxy rate limits before public exposure.

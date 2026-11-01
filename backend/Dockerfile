@@ -1,10 +1,13 @@
-# Build context is the repository root (see docker-compose.yml)
-FROM python:3.12-slim
+FROM swift:5.10-jammy AS build
+WORKDIR /build
+COPY backend/Package.swift ./Package.swift
+COPY backend/Sources ./Sources
+RUN swift build -c release --product syncbench-server
+
+FROM swift:5.10-jammy
 WORKDIR /app
-COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY backend/app ./app
+COPY --from=build /build/.build/release/syncbench-server /usr/local/bin/syncbench-server
 COPY scenarios ./scenarios
-ENV SCENARIOS_DIR=/app/scenarios PYTHONUNBUFFERED=1
+ENV SCENARIOS_DIR=/app/scenarios DATA_DIR=/app/data
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["syncbench-server"]

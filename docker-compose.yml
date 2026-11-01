@@ -1,32 +1,17 @@
 services:
-  db:
-    image: postgres:16
-    environment:
-      POSTGRES_USER: syncbench
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-syncbench}
-      POSTGRES_DB: syncbench
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U syncbench"]
-      interval: 3s
-      timeout: 3s
-      retries: 10
-
   api:
     build:
       context: .
       dockerfile: backend/Dockerfile
     environment:
-      DATABASE_URL: postgresql+psycopg://syncbench:${POSTGRES_PASSWORD:-syncbench}@db:5432/syncbench
       API_KEY: ${API_KEY:-}
+      DATA_DIR: /app/data
+      SCENARIOS_DIR: /app/scenarios
+      PORT: 8000
     ports:
       - "8000:8000"
-    depends_on:
-      db:
-        condition: service_healthy
+    volumes:
+      - syncbench-data:/app/data
 
 volumes:
-  pgdata:
+  syncbench-data:

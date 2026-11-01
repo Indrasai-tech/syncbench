@@ -15,7 +15,7 @@ struct SettingsView: View {
                         .autocorrectionDisabled()
                         .keyboardType(.URL)
                     SecureField("API key (optional)", text: $apiKey)
-                    Text("Simulator + backend on the same Mac: http://127.0.0.1:8000. Physical iPhone: use your Mac's LAN IP or a deployed https:// URL.")
+                    Text("For iOS Simulator or a physical iPhone, use your Mac's LAN IP with port 8000 (for example, http://192.168.1.10:8000). Do not use 127.0.0.1; that points to the device itself. Find your Mac IP with `ipconfig getifaddr en0`.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 Section {

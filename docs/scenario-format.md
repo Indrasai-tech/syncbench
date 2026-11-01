@@ -20,4 +20,4 @@ A `connection` value on any operation switches that client online/offline first.
 **Assertions:** `<field>_matches_expected`, `final_state_matches_expected`, `no_lost_updates`,
 `no_duplicate_business_effects`, `all_operations_acknowledged`.
 
-Files are validated on server startup and in `tests/test_scenarios.py`; an invalid file stops the server from starting.
+Files are validated on server startup; an invalid file stops the server from starting.

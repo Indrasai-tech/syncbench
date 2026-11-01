@@ -1,23 +1,20 @@
 name: backend-ci
 on:
   push:
-    paths: ["backend/**", "scenarios/**", "scripts/**", ".github/workflows/backend-ci.yml"]
+    paths: ["backend/**", "scenarios/**", ".github/workflows/backend-ci.yml"]
   pull_request:
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: swift-actions/setup-swift@v2
         with:
-          python-version: "3.12"
-          cache: pip
-          cache-dependency-path: backend/requirements.txt
-      - run: pip install -r requirements.txt
-      - run: pytest -q
-      - name: Comparison table (informational)
-        working-directory: .
-        run: python scripts/compare_implementations.py
+          swift-version: "5.9"
+      - run: swift build -c release
+      - run: swift test
+      - name: Scenario comparison smoke run
+        run: swift run -c release syncbench-server compare

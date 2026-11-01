@@ -1,9 +1,29 @@
-# Testing guide
+# Build and verification guide
 
-- Backend: `cd backend && pytest -q` (SQLite, no Docker needed). Covers scenario validation, failure injection,
-  assertions, reproducibility, every scenario against both synchronizers, and the REST API.
-- Comparison table: `python scripts/compare_implementations.py --write docs/comparison-results.md`
-- iOS: `ModelTests` (JSON decoding) and `APIClientTests` (URL building, headers, error mapping with a mocked URLProtocol). Run with Cmd+U.
-- **Add a scenario:** drop a JSON file in `scenarios/`; `test_engine.py` automatically checks the reference synchronizer passes it.
-- **Measurements to publish:** scenarios executed, correct pass/fail classification (reference passes all, naive fails the
-  expected ones), lost updates, duplicate effects, retries, wall time, and fingerprint equality across repeated runs.
+## Backend
+
+```bash
+cd backend
+swift build
+swift test
+swift run syncbench-server compare
+```
+
+The comparison command runs every scenario against both synchronizers. To save its Markdown table:
+
+```bash
+swift run syncbench-server compare --write ../docs/comparison-results.md
+```
+
+The comparison validates modeled behavior with a virtual clock; it is not a real network benchmark.
+
+## iOS app
+
+The iOS target includes `ModelTests` for JSON decoding and `APIClientTests` for URL building, headers, and error mapping with a mocked URL protocol. Generate the project with XcodeGen, open it in Xcode, and run the **SyncBench** scheme with Cmd+U.
+
+## Scenario review checklist
+
+- Confirm startup validation accepts each new scenario.
+- Run the reference and naive implementations with the same scenario seed.
+- Check expected pass/fail classification and assertion details.
+- Review lost updates, duplicate effects, pending operations, retries, simulated duration, and fingerprint stability.
